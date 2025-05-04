@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reuters News</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CSS Variables and Global Styles */
+        :root {
+            --reuters-blue: #066CE4;
+            --reuters-dark: #111;
+            --reuters-light-gray: #F3F3F3;
+            --reuters-border: #E6E6E6;
+            --reuters-hover: #FF8200;
+            --reuters-ticker-green: #0a0;
+            --reuters-ticker-red: #c92f41;
+            --bg-color: #ffffff;
+            --text-color: #111;
+            --navbar-bg: #ffffff;
+            --border-color: #E6E6E6;
+            --hero-bg: #ffffff;
+            --timestamp-color: #666;
+            --footer-bg: #f8f8f8;
+            --card-bg: #ffffff;
+            --category-color: var(--reuters-blue);
+            --meta-text: #666;
+            --ticker-bg: #f3f3f3;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --navbar-bg: #111;
+            --border-color: #333;
+            --hero-bg: #1a1a1a;
+            --timestamp-color: #999;
+            --footer-bg: #111;
+            --card-bg: #222;
+            --category-color: #3d8be6;
+            --meta-text: #999;
+            --ticker-bg: #222;
+            --card-shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="dark"] .navbar-content svg path:first-child {
+            fill: #ffffff;
+        }
+
+        .market-ticker .ticker-item {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .market-ticker .ticker-item span {
+            color: #2ecc71;
+        }
+
+        [data-theme="dark"] .social-links a:hover {
+            background: var(--reuters-hover);
+            transform: translateY(-2px);
+        }
+
+        .social-links a {
+            transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Knowledge', 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--reuters-hover);
+        }
+
+        /* Market Ticker */
+        .market-ticker {
+            background: var(--ticker-bg);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            animation: ticker 20s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            margin-right: 30px;
+            font-size: 0.85rem;
+        }
+
+        .ticker-item span {
+            color: #1B8221;
+            margin-left: 5px;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Stock Ticker */
+        .stock-ticker {
+            background-color: var(--navbar-bg);
+            color: var(--text-color);
+            font-size: 13px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stock-ticker .ticker-item {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .stock-ticker .ticker-item span {
+            margin-left: 5px;
+        }
+
+        .stock-ticker .positive {
+            color: var(--reuters-ticker-green);
+        }
+
+        .stock-ticker .negative {
+            color: var(--reuters-ticker-red);
+        }
+
+        /* Navigation */
+        .navbar {
+            height: 56px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--navbar-bg);
+        }
+
+        .navbar-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            max-width: 1280px;
+            margin: 0 auto;
+            gap: 32px;
+        }
+
+        .logo svg {
+            width: 120px;
+            height: 32px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            margin-right: auto;
+        }
+
+        .nav-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 4px 0;
+            position: relative;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-right a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 4px 0;
+        }
+
+        /* Remove all dropdown-related styles */
+        .dropdown-menu, 
+        [data-theme="dark"] .dropdown-menu, 
+        .dropdown-menu::before, 
+        .dropdown-menu a, 
+        .dropdown-menu a:hover {
+            display: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1280px;
+            margin: 24px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .main-story {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+        }
+
+        .main-story img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            margin-bottom: 16px;
+        }
+
+        .main-story h1 {
+            font-size: 36px;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        /* Latest News Section */
+        .latest-news {
+            background: var(--card-bg);
+            padding: 16px;
+            box-shadow: 0 2px 4px var(--card-shadow);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .latest-news h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: var(--category-color);
+        }
+
+        .latest-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .latest-item time {
+            color: var(--meta-text);
+            font-size: 12px;
+        }
+
+        .latest-item h3 {
+            color: var(--text-color);
+        }
+
+        /* News Grid */
+        .news-grid {
+            max-width: 1280px;
+            margin: 40px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+            box-shadow: 0 2px 4px var(--card-shadow);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 16px;
+        }
+
+        .category {
+            color: var(--category-color);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .timestamp {
+            color: var(--meta-text);
+            font-size: 12px;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--footer-bg);
+            padding: 48px 24px 24px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-sitemap {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            margin-bottom: 48px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 32px;
+        }
+
+        .footer-column h3 {
+            color: var(--text-color);
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: var(--reuters-hover);
+        }
+
+        .stay-informed {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 32px;
+            margin-bottom: 32px;
+        }
+
+        .stay-informed h3 {
+            color: var(--text-color);
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .stay-informed-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .company-description {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            color: #666;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .social-links a {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--meta-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-color);
+            transition: all 0.3s ease;
+        }
+
+        .lseg-products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+            padding: 32px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .product-card h4 {
+            color: var(--text-color);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .product-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .legal-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .legal-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .legal-links a:hover {
+            color: var(--reuters-hover);
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .copyright {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .footer-sitemap {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .lseg-products {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-sitemap {
+                grid-template-columns: 1fr;
+            }
+
+            .stay-informed-links {
+                flex-direction: column;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+            
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Additional Styles for New Sections */
+        .category-section {
+            max-width: 1280px;
+            margin: 48px auto;
+            padding: 0 24px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--category-color);
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            transition: transform 0.2s ease;
+        }
+
+        .news-card img {
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .category-section {
+                margin: 32px auto;
+            }
+        }
+
+        /* Two Column Section */
+        .two-column-section {
+            max-width: 1280px;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 66% 33%;
+            gap: 24px;
+        }
+
+        .main-hero {
+            padding-right: 24px;
+        }
+
+        .main-hero .category {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .main-hero .timestamp {
+            color: var(--meta-text);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .main-hero h2 {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .main-hero p {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .main-hero img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        .image-caption {
+            font-size: 12px;
+            font-style: italic;
+            color: var(--meta-text);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stacked-news {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .news-card-small {
+            margin-bottom: 24px;
+            background: var(--card-bg);
+            box-shadow: 0 2px 4px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .news-card-small .meta {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--meta-text);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .news-card-small .category {
+            color: var(--category-color);
+        }
+
+        .news-card-small h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .news-card-small p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .news-card-small img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+
+        /* Dark mode toggle styles */
+        .theme-switch {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .theme-switch-input {
+            display: none;
+        }
+
+        .theme-switch-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .theme-switch-label:before {
+            content: '🌙';
+            margin-right: 5px;
+            font-size: 16px;
+        }
+
+        .theme-switch-input:checked + .theme-switch-label:before {
+            content: '☀️';
+        }
+
+        /* Chat Icon and Interface Styles */
+        .chat-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--reuters-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .chat-interface {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .chat-interface.show-chat {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--reuters-blue);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-clear, .chat-close {
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .chat-clear:hover, .chat-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            line-height: 1.4;
+            font-size: 14px;
+            white-space: pre-wrap;
+            transform: translateY(10px);
+            opacity: 0;
+            animation: messageAppear 0.3s ease forwards;
+        }
+        .bot-message {
+            background: var(--reuters-blue);
+            color: white;
+            margin-right: auto;
+            border-radius: 12px 12px 12px 0;
+        }
+
+        .chat-input {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            outline: none;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .chat-input button {
+            padding: 8px 16px;
+            background: var(--reuters-blue);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .chat-input button:hover {
+            background: #0550b3;
+        }
+
+        @media (max-width: 480px) {
+            .chat-interface {
+                width: calc(100% - 40px);
+                height: 60vh;
+                bottom: 80px;
+            }
+
+            .chat-icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px;
+            background: var(--reuters-blue);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            width: fit-content;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .typing-indicator.visible {
+            opacity: 1;
+        }
+
+        .typing-indicator span {
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Search bar and results styling */
+        .search-bar {
+            margin: 20px auto;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #search-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #search-results {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: solid #c3c3c3;
+            box-shadow: 0 2px 4px var(--card-shadow);
+        }
+
+        .search-result {
+            margin-bottom: 10px;
+        }
+
+        .search-result h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--category-color);
+        }
+
+        .search-result p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        /* Responsive Design for All Sections */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .category-section {
+                margin: 32px auto;
+            }
+
+            .two-column-section {
+                grid-template-columns: 1fr;
+            }
+
+            .main-hero img {
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-sitemap {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .lseg-products {
+                grid-template-columns: 1fr;
+            }
+
+            .category-section {
+                margin: 24px auto;
+            }
+
+            [data-theme="dark"] #search-results {
+                background-color: #333;
+                color: white;
+                border: 1px solid #555;
+                display: block; /* Ensure visibility */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-sitemap {
+                grid-template-columns: 1fr;
+            }
+
+            .stay-informed-links {
+                flex-direction: column;
+            }
+
+            .chat-interface {
+                width: calc(100% - 40px);
+                height: 60vh;
+                bottom: 80px;
+            }
+
+            .chat-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .hero img {
+                height: auto;
+            }
+
+            .category-section {
+                margin: 16px auto;
+            }
+        }
+
+        /* Hamburger Menu for Mobile Navbar */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+            border-radius: 5px;
+            transition: all 0.3s linear;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: row;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 50px;
+                right: 10px;
+                background-color: white;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+                overflow: hidden;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            [data-theme="dark"] .hamburger div {
+                background-color: white;
+            }
+
+            [data-theme="dark"] .nav-menu a {
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                <svg aria-hidden="true" role="presentation" focusable="false" viewBox="0 0 147 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#212223" d="M46.938 9.77h8.241c4.453 0 7.432 2.597 7.432 6.652 0 2.571-1.36 4.624-3.469 5.623l3.989 7.709H58.33l-3.415-6.71h-3.643v6.71h-4.34V9.77h.005zm4.34 3.567v6.138h3.559c2.053 0 3.353-1.199 3.353-3.056s-1.3-3.084-3.353-3.084h-3.559v.002zm12.473 9.105c0-4.569 3.035-7.535 7.633-7.535s7.461 2.739 7.519 7.05c0 .43-.028.912-.116 1.371H68v.198c.087 2.083 1.445 3.34 3.499 3.34 1.65 0 2.805-.714 3.153-2.083h4.021c-.464 2.855-3.035 5.139-7 5.139-4.946 0-7.922-2.94-7.922-7.48h.002-.001zm11.046-1.743c-.29-1.799-1.535-2.797-3.385-2.797s-3.095 1.057-3.325 2.797h6.71zm15.891-5.618h4.079v14.674h-3.615l-.374-1.771c-.954 1.141-2.254 1.941-4.368 1.941-3.063 0-5.9-1.513-5.9-6.71v-8.136h4.079v7.593c0 2.626.87 3.912 2.893 3.912s3.209-1.455 3.209-4.168v-7.337h-.002l.002.002h-.001zm6.491-4.101h4.079v4.11h3.385v3.398h-3.385v6.425c0 1.028.406 1.455 1.445 1.455h2.11v3.396h-3.385c-2.835 0-4.251-1.397-4.251-4.195V10.982l.002-.002zm8.306 11.462c0-4.569 3.035-7.535 7.636-7.535s7.461 2.739 7.519 7.05a7.77 7.77 0 0 1-.116 1.371h-10.788v.198c.084 2.083 1.445 3.34 3.499 3.34 1.649 0 2.805-.714 3.156-2.083h4.017c-.464 2.855-3.035 5.139-6.997 5.139-4.946 0-7.926-2.94-7.926-7.48zm11.05-1.743c-.29-1.799-1.535-2.797-3.385-2.797s-3.095 1.057-3.325 2.797h6.71zm14.97-5.62v3.656h-1.619c-2.431 0-3.354 1.597-3.354 3.826v7.194h-4.078V15.081h3.701l.377 2.196c.81-1.313 1.964-2.196 4.279-2.196h.694v-.002zm4.526 9.794c.145 1.284 1.271 2.169 3.269 2.169 1.705 0 2.747-.543 2.747-1.569 0-1.199-1.01-1.284-3.412-1.597-3.472-.4-6.162-1.171-6.162-4.195s2.575-4.825 6.39-4.795c3.989 0 6.74 1.743 6.942 4.737H141.9c-.113-1.171-1.244-1.885-2.891-1.885s-2.631.572-2.631 1.513c0 1.115 1.273 1.229 3.414 1.485 3.415.342 6.248 1.115 6.248 4.426 0 2.91-2.777 4.767-6.768 4.767s-6.939-1.915-7.115-5.051h3.875-.002v-.005h.001z"></path><path fill="#D64000" d="M34.579 5.368a2.69 2.69 0 0 1 .791 1.911 2.68 2.68 0 0 1-.791 1.911 2.7 2.7 0 0 1-3.817 0 2.69 2.69 0 0 1-.791-1.911c0-.723.279-1.401.791-1.911a2.69 2.69 0 0 1 1.909-.792c.691 0 1.384.264 1.909.792h-.001zM5.378 34.624a2.71 2.71 0 0 1 0-3.821 2.68 2.68 0 0 1 1.909-.792 2.67 2.67 0 0 1 1.909.792 2.71 2.71 0 0 1 0 3.821 2.68 2.68 0 0 1-1.909.792c-.72 0-1.4-.28-1.909-.792zM25.955 5.58l-.019-.008c-.574-.243-1.023-.694-1.26-1.272a2.34 2.34 0 0 1 0-1.811 2.36 2.36 0 0 1 1.279-1.28c.293-.121.598-.182.905-.182a2.34 2.34 0 0 1 .904.182A2.37 2.37 0 0 1 29.042 4.3c-.498 1.206-1.883 1.779-3.087 1.28zM13.108 34.239c.306 0 .611.061.902.179a2.37 2.37 0 0 1 1.279 3.091 2.35 2.35 0 0 1-1.279 1.28c-.583.243-1.223.243-1.809 0a2.37 2.37 0 0 1-1.279-3.091 2.35 2.35 0 0 1 2.184-1.462l.002.002zm8.895-32.212c0 1.087-.86 1.977-1.932 2.027h-.092a2.03 2.03 0 0 1-2.025-2.027A2.03 2.03 0 0 1 19.978 0c1.115 0 2.025.914 2.025 2.029v-.002zm-4.052 35.946a2.03 2.03 0 0 1 2.025-2.027 2.03 2.03 0 0 1 2.025 2.027A2.03 2.03 0 0 1 19.976 40a2.03 2.03 0 0 1-2.025-2.027zM13.76 4.956a1.68 1.68 0 0 1-1.292 0 1.67 1.67 0 0 1-.915-.916 1.69 1.69 0 0 1 .915-2.209 1.67 1.67 0 0 1 .643-.129c.664 0 1.292.396 1.563 1.045.172.42.172.879 0 1.293a1.66 1.66 0 0 1-.915.916zm12.436 30.087a1.69 1.69 0 0 1 .649-.132 1.72 1.72 0 0 1 .645.129c.419.174.744.499.915.916a1.69 1.69 0 0 1 0 1.293 1.66 1.66 0 0 1-.915.916 1.69 1.69 0 0 1-1.294 0 1.66 1.66 0 0 1-.915-.916c-.172-.42-.172-.876 0-1.293s.496-.742.915-.913v.001zM8.239 6.342c.52.52.527 1.357.026 1.887l-.03.03a1.36 1.36 0 0 1-1.915 0 1.36 1.36 0 0 1 0-1.916 1.35 1.35 0 0 1 1.915 0h.002l.001-.001zM31.703 31.75a1.34 1.34 0 0 1 .954-.396 1.35 1.35 0 0 1 .957.396c.256.254.395.594.395.955a1.35 1.35 0 0 1-2.308.958 1.35 1.35 0 0 1-.395-.958c0-.359.14-.699.395-.955h.002zM2.747 14.682c-.862-.357-1.271-1.349-.915-2.209a1.66 1.66 0 0 1 .915-.916 1.75 1.75 0 0 1 .649-.129 1.68 1.68 0 0 1 .645.129c.862.357 1.271 1.349.915 2.209a1.66 1.66 0 0 1-.915.916 1.68 1.68 0 0 1-1.292 0h-.002zm34.469 10.642a1.66 1.66 0 0 1 .915.916c.172.42.172.876 0 1.293a1.69 1.69 0 0 1-2.207.914 1.66 1.66 0 0 1-.915-.916c-.172-.42-.172-.876 0-1.293.269-.649.899-1.043 1.563-1.043a1.7 1.7 0 0 1 .643.129zM0 20.011a2.03 2.03 0 0 1 2.025-2.027 2.03 2.03 0 0 1 2.025 2.027 2.03 2.03 0 0 1-2.025 2.027A2.03 2.03 0 0 1 0 20.011zm35.907 0a2.03 2.03 0 0 1 2.025-2.027 2.03 2.03 0 0 1 2.025 2.027 2.03 2.03 0 0 1-2.025 2.027 2.03 2.03 0 0 1-2.025-2.027zM1.199 27.783a2.37 2.37 0 0 1 1.279-3.091c.583-.243 1.223-.243 1.808 0a2.36 2.36 0 0 1 1.279 1.28 2.34 2.34 0 0 1 0 1.811 2.36 2.36 0 0 1-1.279 1.28c-.583.243-1.223.243-1.808 0a2.36 2.36 0 0 1-1.279-1.28zm33.174-13.759a2.36 2.36 0 0 1 1.279-3.087 2.31 2.31 0 0 1 .899-.182c.928 0 1.809.549 2.186 1.459a2.37 2.37 0 0 1-1.279 3.091c-.583.243-1.223.243-1.808 0s-1.036-.697-1.279-1.28h.002v-.001zm-8.65 11.726a1.9 1.9 0 0 0 0 2.684c.741.742 1.943.742 2.684 0a1.88 1.88 0 0 0 .556-1.341 1.88 1.88 0 0 0-.556-1.34c-.37-.37-.854-.555-1.339-.555a1.91 1.91 0 0 0-1.344.551v.001zM9.902 18.851c-.802-.213-1.276-1.039-1.062-1.842a1.5 1.5 0 0 1 .701-.914 1.48 1.48 0 0 1 .746-.204c.129 0 .261.015.391.05.387.105.712.353.912.702s.253.755.15 1.143a1.5 1.5 0 0 1-1.84 1.063h.002zm19.37 5.197c-.387-.105-.712-.353-.912-.702s-.253-.755-.15-1.143a1.5 1.5 0 0 1 .701-.914 1.49 1.49 0 0 1 .748-.203 1.52 1.52 0 0 1 .322.034l.071.019c.802.213 1.276 1.043 1.062 1.842a1.5 1.5 0 0 1-.701.913c-.348.2-.754.256-1.141.151v.002.001zm-20.14-1.14a1.21 1.21 0 0 1 .783-1.457l.069-.019c.641-.174 1.302.211 1.474.852.084.312.043.636-.121.916a1.21 1.21 0 0 1-.731.562c-.309.084-.632.042-.915-.122a1.21 1.21 0 0 1-.561-.731l.002-.002zm19.923-4.455l-.052-.032c-.251-.164-.43-.409-.507-.699-.172-.644.208-1.304.851-1.478s1.302.211 1.474.852-.208 1.304-.851 1.476c-.311.084-.632.039-.915-.121v.002zm-15.496 9.233l-.034.034c-.353.353-.928.353-1.281 0s-.353-.927 0-1.28.928-.353 1.281 0a.9.9 0 0 1 .266.641.89.89 0 0 1-.232.604v.001zm14.142-15.427a.9.9 0 0 1 0 1.282c-.353.353-.928.353-1.281 0a.9.9 0 0 1 0-1.282c.171-.172.398-.267.641-.267s.469.092.641.264v.002l-.001-.001zm-9.277 16.83c.161.277.203.604.121.916s-.282.57-.561.731-.604.203-.915.121c-.641-.172-1.023-.834-.851-1.475.084-.312.282-.57.561-.731a1.2 1.2 0 0 1 .915-.122c.311.084.57.282.731.562v-.002l-.001-.001zm3.1-18.173c-.161-.277-.204-.604-.122-.916s.282-.57.561-.731a1.21 1.21 0 0 1 .598-.161c.105 0 .208.013.314.039a1.19 1.19 0 0 1 .73.562c.161.277.204.604.122.916-.172.641-.833 1.024-1.474.852a1.19 1.19 0 0 1-.73-.562zm1.808 17.48l.064.037a1.5 1.5 0 0 1 .636.873c.213.802-.262 1.628-1.062 1.842-.391.106-.793.05-1.141-.15s-.596-.525-.701-.913a1.5 1.5 0 0 1 1.062-1.846 1.58 1.58 0 0 1 .393-.05 a1.49 1.49 0 0 1 .748.203l.002.002v.001zm-5.56-16.633a1.51 1.51 0 0 1-1.84-1.063c-.213-.802.261-1.628 1.062-1.842a1.52 1.52 0 0 1 .387-.05c.664 0 1.273.443 1.453 1.114.213.802-.262 1.628-1.062 1.842zm-4.883 3.022c1.046 0 1.893-.848 1.893-1.895s-.848-1.895-1.893-1.895-1.893.848-1.893 1.895.848 1.895 1.893 1.895z">
+
+                </path>
+            </svg>
+            </div>
+            <div class="nav-menu">
+                <a href="#">World</a>
+                <a href="#">Business</a>
+                <a href="#">Markets</a>
+                <a href="#">Technology</a>
+                <a href="#">Sports</a>
+                <a href="#">Lifestyle</a>
+                <a href="#">Breakingviews</a>
+                <a href="#">More</a>
+            </div>
+            <div class="nav-right">
+                <a href="#">Sign In</a>
+                <a href="#">Subscribe</a>
+                <div class="theme-switch">
+                    <input type="checkbox" id="theme-switch" class="theme-switch-input">
+                    <label for="theme-switch" class="theme-switch-label"></label>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="market-ticker">
+        <div class="ticker-content">
+            <div class="ticker-item">DOW JONES 34,721.91 <span>+105.02</span></div>
+            <div class="ticker-item">S&P 500 4,547.64 <span>+28.35</span></div>
+            <div class="ticker-item">NASDAQ 14,265.86 <span>+85.75</span></div>
+            <div class="ticker-item">CRUDE OIL 82.45 <span>+1.25</span></div>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search articles...">
+        <button id="search-results">Submit</button>
+    </div>
+
+    <main>
+        <section class="hero">
+            <div class="main-story">
+                <img src="https://www.reuters.com/resizer/YQmE1G0P6LJTOb92_v8hed8U4Xw=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/U6XMWVR4FBOWDEYNJ2WGDPYK3Y.jpg" alt="Global Climate Summit">
+                <span class="category">WORLD</span>
+                <h1>Global leaders gather for climate summit amid rising tensions</h1>
+                <p>World powers convene to address climate crisis as new data shows accelerating environmental changes, with key negotiations focused on emission targets and renewable energy transitions.</p>
+                <div class="timestamp">May 4, 2025 · 3:45 PM GMT</div>
+            </div>
+            <div class="latest-news">
+                <h2>LATEST</h2>
+                <div class="latest-item">
+                    <time>3:30 PM GMT</time>
+                    <h3>Tech stocks surge as AI developments spark investor optimism</h3>
+                </div>
+                <div class="latest-item">
+                    <time>3:15 PM GMT</time>
+                    <h3>EU announces new trade regulations affecting global markets</h3>
+                </div>
+                <div class="latest-item">
+                    <time>3:00 PM GMT</time>
+                    <h3>Major breakthrough in renewable energy storage technology</h3>
+                </div>
+                <div class="latest-item">
+                    <time>2:45 PM GMT</time>
+                    <h3>Sports: International soccer body introduces new tournament format</h3>
+                </div>
+                <div class="latest-item">
+                    <time>2:30 PM GMT</time>
+                    <h3>Oil prices stabilize after Middle East tensions ease</h3>
+                </div>
+                <div class="latest-item">
+                    <time>2:15 PM GMT</time>
+                    <h3>Healthcare: New vaccine shows promising results in trials</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="news-grid">
+            <article class="news-card">
+                <img src="https://www.reuters.com/resizer/X2Tp96VZ9RdmhYFr9w3g8N0_AoU=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/LWPEB4UFOJLQ5KQJR7YQQPTK3I.jpg" alt="AI Technology">
+                <span class="category">TECHNOLOGY</span>
+                <h2>Artificial intelligence reshapes global workforce dynamics</h2>
+                <p>New study reveals widespread impact of AI on employment patterns and skill requirements across industries</p>
+                <div class="timestamp">May 4, 2025 · 2:30 PM GMT</div>
+            </article>
+            <article class="news-card">
+                <img src="https://www.reuters.com/resizer/NtV0U_y1p3K4M_ZQhVX0G6PF6xQ=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/TZ7QATKOWVPHHPKQ3GR567XHZM.jpg" alt="Stock Market">
+                <span class="category">MARKETS</span>
+                <h2>Central banks signal shift in monetary policy approach</h2>
+                <p>Global markets react to coordinated policy adjustments amid economic uncertainties</p>
+                <div class="timestamp">May 4, 2025 · 2:15 PM GMT</div>
+            </article>
+            <article class="news-card">
+                <img src="https://www.reuters.com/resizer/uM1R0ONu_PBKR9I5SdI1IkvVKZA=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/YQKBEXJGWBNWPNY6SCCLZ5OCMU.jpg" alt="Electric Vehicle">
+                <span class="category">BUSINESS</span>
+                <h2>Electric vehicle makers face supply chain challenges</h2>
+                <p>Industry leaders seek solutions to growing demand amid material shortages</p>
+                <div class="timestamp">May 4, 2025 · 2:00 PM GMT</div>
+            </article>
+        </section>
+
+        <section class="category-section">
+            <h2 class="section-title">WORLD</h2>
+            <div class="news-grid">
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/QC4Y4AwHM9X9IAjVBXZP86ZG_Cw=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/PQZKQGM4VVIQFBX27XXPWY43LA.jpg" alt="Diplomacy">
+                    <span class="category">DIPLOMACY</span>
+                    <h2>US-China diplomatic talks yield breakthrough in trade relations</h2>
+                    <p>Key agreements reached on technology transfer and market access</p>
+                    <div class="timestamp">May 4, 2025 · 1:45 PM GMT</div>
+                </article>
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/V3QXm6Qz8T6PU-GLKE7TvuF5EZ0=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/BWEJ3P2AUJMY5GV3PSDXMQPHYE.jpg" alt="EU Summit">
+                    <span class="category">EUROPE</span>
+                    <h2>EU unveils ambitious digital currency framework</h2>
+                    <p>New regulations aim to standardize cryptocurrency operations across member states</p>
+                    <div class="timestamp">May 4, 2025 · 1:30 PM GMT</div>
+                </article>
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/Yg0_K0p6BgNx6Ql9UeJPsUryCNA=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/M4WVPYKLNVLCPDW6CD3QVHZDII.jpg" alt="Space Exploration">
+                    <span class="category">SCIENCE</span>
+                    <h2>Private space companies announce joint Mars mission</h2>
+                    <p>Collaborative effort aims to establish first commercial presence on Red Planet</p>
+                    <div class="timestamp">May 4, 2025 · 1:15 PM GMT</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <h2 class="section-title">TECHNOLOGY</h2>
+            <div class="news-grid">
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/X8RYd4UFaT4X6QfBB5PyvloYEVU=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/HK4IWQR7ZBJORLPK5PWQUXHHBA.jpg" alt="Quantum Computing">
+                    <span class="category">INNOVATION</span>
+                    <h2>Quantum computing breakthrough promises new era of drug discovery</h2>
+                    <p>Scientists demonstrate first practical application in pharmaceutical research</p>
+                    <div class="timestamp">May 4, 2025 · 1:00 PM GMT</div>
+                </article>
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/KpRrUZN9_0qz_MQRQW6C_ARGUTA=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/4XKPCA4RXVOGTNT5AQPFAFKPNE.jpg" alt="Cybersecurity">
+                    <span class="category">CYBERSECURITY</span>
+                    <h2>Global cybersecurity alliance forms to combat rising threats</h2>
+                    <p>Major tech companies join forces to address sophisticated cyber attacks</p>
+                    <div class="timestamp">May 4, 2025 · 12:45 PM GMT</div>
+                </article>
+                <article class="news-card">
+                    <img src="https://www.reuters.com/resizer/YvCsT9_wE_bJ4ZK5kJ3K6CLu4vA=/960x0/filters:quality(80)/cloudfront-us-east-2.images.arcpublishing.com/reuters/P3TGKQWNZVP5ZKQXCWYK3RT2LY.jpg" alt="5G Network">
+                    <span class="category">TELECOMMUNICATIONS</span>
+                    <h2>Next-gen 6G networks enter early testing phase</h2>
+                    <p>Researchers achieve breakthrough in high-frequency communication</p>
+                    <div class="timestamp">May 4, 2025 · 12:30 PM GMT</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="two-column-section">
+            <div class="main-hero">
+                <span class="category">United States</span>
+                <div class="timestamp">May 4, 2025 · 4:15 PM EDT</div>
+                <h2>Federal Reserve signals potential shift in interest rate policy amid economic data</h2>
+                <p>Central bank officials hint at possible adjustment to monetary stance as inflation metrics and employment figures show mixed signals, marking potential turning point in post-pandemic economic recovery.</p>
+                <img src="https://www.reuters.com/resizer/placeholder-image-700x400.jpg" alt="Federal Reserve Building">
+                <div class="image-caption">Federal Reserve Building in Washington, D.C. REUTERS/John Smith</div>
+            </div>
+            <div class="stacked-news">
+                <article class="news-card-small">
+                    <div class="meta">
+                        <span class="timestamp">4:00 PM EDT</span>
+                        <span class="category">Markets</span>
+                    </div>
+                    <h3>Wall Street rallies as tech sector leads broad-based market gains</h3>
+                    <p>Major indices climb on strong earnings reports and positive economic indicators.</p>
+                    <img src="https://www.reuters.com/resizer/placeholder-image-300x170.jpg" alt="Stock Market Display">
+                    <div class="image-caption">Traders work on the floor of the New York Stock Exchange. REUTERS/Jane Doe</div>
+                </article>
+                <article class="news-card-small">
+                    <div class="meta">
+                        <span class="timestamp">3:45 PM EDT</span>
+                        <span class="category">Technology</span>
+                    </div>
+                    <h3>AI startup secures record funding in latest investment round</h3>
+                    <p>Artificial intelligence firm attracts major venture capital backing for innovative machine learning platform.</p>
+                    <img src="https://www.reuters.com/resizer/placeholder-image2-300x170.jpg" alt="AI Technology Visualization">
+                    <div class="image-caption">AI visualization display at company headquarters. REUTERS/Robert Johnson</div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-sitemap">
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="#">Latest</a></li>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Authors</a></li>
+                        <li><a href="#">Topic Sitemap</a></li>
+                        <li><a href="#">Archive</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="#">World</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Markets</a></li>
+                        <li><a href="#">Legal</a></li>
+                        <li><a href="#">Technology</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="#">Sports</a></li>
+                        <li><a href="#">Science</a></li>
+                        <li><a href="#">Media</a></li>
+                        <li><a href="#">Videos</a></li>
+                        <li><a href="#">Pictures</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <ul>
+                        <li><a href="#">About Reuters</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Reuters News Agency</a></li>
+                        <li><a href="#">Reuters Leadership</a></li>
+                        <li><a href="#">Reuters Fact Check</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stay-informed">
+                <h3>Stay Informed</h3>
+                <div class="stay-informed-links">
+                    <a href="#" class="app-link">Download the App (iOS)</a>
+                    <a href="#" class="app-link">Download the App (Android)</a>
+                    <a href="#" class="newsletter-link">Newsletters</a>
+                </div>
+            </div>
+
+            <div class="company-description">
+                Reuters, the news and media division of Thomson Reuters, is the world's largest multimedia news provider, reaching billions of people worldwide every day.
+            </div>
+
+            <div class="social-links">
+                <a href="#" aria-label="Facebook">📱</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="LinkedIn">💼</a>
+            </div>
+
+            <div class="lseg-products">
+                <div class="product-card">
+                    <h4>Workspace</h4>
+                    <p>Access unmatched financial data, news and content.</p>
+                </div>
+                <div class="product-card">
+                    <h4>Data Catalogue</h4>
+                    <p>Browse real-time and historical market data.</p>
+                </div>
+                <div class="product-card">
+                    <h4>World-Check</h4>
+                    <p>Screen for heightened risk individuals and entities.</p>
+                </div>
+            </div>
+
+            <div class="legal-links">
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy</a>
+                <a href="#">Digital Accessibility</a>
+                <a href="#">Corrections</a>
+            </div>
+            
+            <div class="disclaimer">
+                All quotes delayed a minimum of 15 minutes. See here for a complete list of exchanges and delays.
+            </div>
+
+            <div class="copyright">
+                © 2025 Reuters. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <div class="chat-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white"/>
+        </svg>
+    </div>
+    <div class="chat-interface">
+        <div class="chat-header">
+            <span>Reuters Assistant</span>
+            <span class="chat-close">✕</span>
+        </div>
+        <div class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message...">
+            <button>Send</button>
+        </div>
+    </div>
+    <script>
+        // Removed TensorFlow.js model loading and recommendation logic
+    </script>
+    <script>
+        const themeSwitch = document.getElementById('theme-switch');
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeSwitch.checked = true;
+        }
+
+        // Handle theme switch
+        themeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        const chatIcon = document.querySelector('.chat-icon');
+        const chatInterface = document.querySelector('.chat-interface');
+        const chatClose = document.querySelector('.chat-close');
+
+        chatIcon.addEventListener('click', () => {
+            chatInterface.classList.toggle('show-chat');
+            if (chatInterface.classList.contains('show-chat')) {
+                initChat();
+                chatInput.focus();
+            }
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatInterface.classList.remove('show-chat');
+        });
+
+        // Clear chat history when clicking clear button
+        const clearHistory = () => {
+            chatMessages.innerHTML = '';
+            chatHistory = [];
+            localStorage.removeItem('chatHistory');
+            addMessage('Welcome to Reuters Assistant! How can I help you today?', 'bot');
+        };
+
+        // Chat functionality
+        const chatInput = document.querySelector('.chat-input input');
+        const chatButton = document.querySelector('.chat-input button');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        // Enhanced bot responses
+        const botResponses = {
+            'hello': 'Hi there! I\'m your Reuters Assistant. I can help you find news, understand market data, or answer questions about our content.',
+            'news': 'Here are our main sections:\n• World News\n• Business\n• Markets\n• Technology',
+            'markets': 'I can help you with market information, stock prices, and financial news. What specifically would you like to know?',
+            'help': 'Try these commands:\n• "news" - Browse news sections\n• "markets" - Check financial data\n• "latest" - See breaking news',
+            'default': 'I can help you find specific news or information. Try asking about World News, Markets, or Technology.'
+        };
+
+        // Enhanced bot responses for news categories
+        const newsCategories = {
+            'world': 'Latest World News:\n• Global Climate Summit\n• US-China Trade Talks\n• EU Digital Currency',
+            'business': 'Top Business Stories:\n• EV Supply Chain\n• Tech Workforce Changes\n• Market Updates',
+            'technology': 'Technology Headlines:\n• AI Developments\n• Quantum Computing\n• 6G Networks',
+            'markets': 'Market Updates:\n• DOW: 34,721.91 (+105.02)\n• S&P 500: 4,547.64 (+28.35)\n• NASDAQ: 14,265.86 (+85.75)',
+            'sports': 'Sports Coverage:\n• International Soccer\n• Olympics\n• Tennis'
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Alt + C to toggle chat
+            if (e.altKey && e.key === 'c') {
+                chatInterface.classList.toggle('show-chat');
+                if (chatInterface.classList.contains('show-chat')) {
+                    chatInput.focus();
+                }
+            }
+            
+            // Escape to close chat
+            if (e.key === 'Escape' && chatInterface.classList.contains('show-chat')) {
+                chatInterface.classList.remove('show-chat');
+            }
+        });
+
+        function initChat() {
+            if (!localStorage.getItem('chatInitialized')) {
+                setTimeout(() => {
+                    addMessage('Welcome to Reuters! I\'m your AI assistant. How can I help you today?', 'bot');
+                    localStorage.setItem('chatInitialized', 'true');
+                }, 500);
+            }
+        }
+
+        // Load chat history from localStorage
+        let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+
+        // Display existing chat history
+        function loadChatHistory() {
+            chatHistory.forEach(message => {
+                const messageElement = createMessageElement(message.text, message.type);
+                chatMessages.appendChild(messageElement);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createMessageElement(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', `${type}-message`);
+            messageDiv.textContent = text;
+            return messageDiv;
+        }
+
+        function addMessage(text, type) {
+            const message = { text, type, timestamp: new Date().getTime() };
+            chatHistory.push(message);
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+
+            const messageElement = createMessageElement(text, type);
+            messageElement.style.opacity = '0';
+            chatMessages.appendChild(messageElement);
+            
+            // Trigger reflow
+            messageElement.offsetHeight;
+            
+            messageElement.style.transition = 'opacity 0.3s ease';
+            messageElement.style.opacity = '1';
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotResponse(text) {
+            const lowerText = text.toLowerCase();
+            
+            // Check for category-specific queries
+            for (const [category, response] of Object.entries(newsCategories)) {
+                if (lowerText.includes(category)) {
+                    return response;
+                }
+            }
+            
+            // Check general responses
+            for (const [key, response] of Object.entries(botResponses)) {
+                if (lowerText.includes(key)) {
+                    return response;
+                }
+            }
+            
+            return botResponses.default;
+        }
+
+        function handleUserMessage() {
+            const text = chatInput.value.trim();
+            if (text) {
+                addMessage(text, 'user');
+                chatInput.value = '';
+
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.classList.add('typing-indicator');
+                typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+                chatMessages.appendChild(typingIndicator);
+                typingIndicator.classList.add('visible');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Simulate bot response after a delay
+                setTimeout(() => {
+                    typingIndicator.classList.remove('visible');
+                    setTimeout(() => {
+                        typingIndicator.remove();
+                        const botResponse = getBotResponse(text);
+                        addMessage(botResponse, 'bot');
+                    }, 300);
+                }, 1200);
+            }
+        }
+
+        chatButton.addEventListener('click', handleUserMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleUserMessage();
+            }
+        });
+
+        // Load chat history when chat is opened
+        loadChatHistory();
+    </script>
+    <script src="https://unpkg.com/compromise"></script>
+    <script>
+        // Define the articles array with sample data
+        const articles = [
+            { id: 1, title: "Global leaders gather for climate summit amid rising tensions", content: "World powers convene to address climate crisis as new data shows accelerating environmental changes." },
+            { id: 2, title: "Tech stocks surge as AI developments spark investor optimism", content: "Investors are optimistic about the future of AI, leading to a surge in tech stocks." },
+            { id: 3, title: "EU announces new trade regulations affecting global markets", content: "The European Union has introduced new trade regulations that could impact global markets." },
+            { id: 4, title: "Major breakthrough in renewable energy storage technology", content: "Scientists have achieved a major breakthrough in renewable energy storage technology." },
+            { id: 5, title: "Sports: International soccer body introduces new tournament format", content: "A new tournament format has been introduced by the international soccer body." }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+
+            // Enhanced search functionality for better matching
+            function searchArticles(query) {
+                const nlpQuery = nlp(query).normalize().out('text');
+                console.log('Normalized query:', nlpQuery); // Debug log
+                const results = articles.filter(article => {
+                    const titleMatch = article.title.toLowerCase().includes(nlpQuery.toLowerCase());
+                    const contentMatch = article.content.toLowerCase().includes(nlpQuery.toLowerCase());
+                    console.log(`Checking article: ${article.title}`);
+                    console.log('Title match:', titleMatch, 'Content match:', contentMatch); // Debug log
+                    return titleMatch || contentMatch;
+                });
+                console.log('Search results:', results); // Debug log
+                return results;
+            }
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value;
+                console.log('Search query:', query); // Debug log
+                if (query.length > 2) {
+                    const results = searchArticles(query);
+                    displaySearchResults(results);
+                } else {
+                    searchResults.innerHTML = ''; // Clear results if query is too short
+                }
+            });
+
+            // Add click event to open article when a result is clicked
+            function displaySearchResults(results) {
+                console.log('Displaying results:', results); // Debug log
+                searchResults.innerHTML = results.map(result => `
+                    <div class="search-result" data-id="${result.id}">
+                        <h3>${result.title}</h3>
+                        <p>${result.content}</p>
+                    </div>
+                `).join('');
+
+                // Add click event listeners to each search result
+                document.querySelectorAll('.search-result').forEach(resultElement => {
+                    resultElement.addEventListener('click', () => {
+                        const articleId = resultElement.getAttribute('data-id');
+                        const article = articles.find(a => a.id == articleId);
+                        if (article) {
+                            alert(`Opening article: ${article.title}\n\n${article.content}`);
+                        }
+                    });
+                });
+            }
+
+            console.log('Articles data:', articles); // Debug log
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // User Engagement Tracker
+            const engagementData = {
+                clicks: 0,
+                scrollDepth: 0,
+                timeSpent: 0,
+                startTime: Date.now()
+            };
+
+            // Track clicks
+            document.addEventListener('click', () => {
+                engagementData.clicks++;
+                console.log(`Total Clicks: ${engagementData.clicks}`);
+            });
+
+            // Track scroll depth
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.body.scrollHeight;
+                const currentScrollDepth = Math.min(
+                    (scrollTop + windowHeight) / documentHeight * 100,
+                    100
+                );
+                engagementData.scrollDepth = Math.max(
+                    engagementData.scrollDepth,
+                    currentScrollDepth
+                );
+                console.log(`Scroll Depth: ${engagementData.scrollDepth.toFixed(2)}%`);
+            });
+
+            // Track time spent on the page
+            setInterval(() => {
+                engagementData.timeSpent = Math.floor((Date.now() - engagementData.startTime) / 1000);
+                console.log(`Time Spent: ${engagementData.timeSpent} seconds`);
+            }, 10000); // Log every 10 seconds
+
+            // Log engagement data when the user leaves the page
+            window.addEventListener('beforeunload', () => {
+                console.log('Final Engagement Data:', engagementData);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // User Engagement Tracker Model
+            const engagementData = {
+                clicks: 0,
+                scrollDepth: 0,
+                timeSpent: 0,
+                startTime: Date.now()
+            };
+
+            // Track clicks
+            document.addEventListener('click', () => {
+                engagementData.clicks++;
+            });
+
+            // Track scroll depth
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.body.scrollHeight;
+                const currentScrollDepth = Math.min(
+                    (scrollTop + windowHeight) / documentHeight * 100,
+                    100
+                );
+                engagementData.scrollDepth = Math.max(
+                    engagementData.scrollDepth,
+                    currentScrollDepth
+                );
+            });
+
+            // Track time spent on the page
+            setInterval(() => {
+                engagementData.timeSpent = Math.floor((Date.now() - engagementData.startTime) / 1000);
+            }, 1000); // Update every second
+
+            // Display tracker icon
+            const trackerIcon = document.createElement('div');
+            trackerIcon.id = 'tracker-icon';
+            trackerIcon.innerHTML = '📊';
+            trackerIcon.title = 'View Engagement Data';
+            trackerIcon.style.position = 'fixed';
+            trackerIcon.style.bottom = '90px'; // Place it above the chat icon
+            trackerIcon.style.right = '20px';
+            trackerIcon.style.width = '50px';
+            trackerIcon.style.height = '50px';
+            trackerIcon.style.backgroundColor = '#066CE4';
+            trackerIcon.style.color = 'white';
+            trackerIcon.style.borderRadius = '50%';
+            trackerIcon.style.display = 'flex';
+            trackerIcon.style.alignItems = 'center';
+            trackerIcon.style.justifyContent = 'center';
+            trackerIcon.style.cursor = 'pointer';
+            trackerIcon.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+
+            // Fix icon overflow from blue circle container
+            trackerIcon.style.overflow = 'hidden';
+            trackerIcon.style.textAlign = 'center';
+            trackerIcon.style.lineHeight = '50px'; // Match the height of the container
+
+            // Log creation of tracker icon
+            console.log('Tracker icon created:', trackerIcon);
+
+            // Ensure visibility with high z-index
+            trackerIcon.style.zIndex = '9999';
+            trackerIcon.style.display = 'block';
+
+            document.body.appendChild(trackerIcon);
+
+            // Show engagement data on click
+            trackerIcon.addEventListener('click', () => {
+                alert(`Engagement Data:\n\n` +
+                    `Clicks: ${engagementData.clicks}\n` +
+                    `Scroll Depth: ${engagementData.scrollDepth.toFixed(2)}%\n` +
+                    `Time Spent: ${engagementData.timeSpent} seconds`);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.createElement('button');
+            hamburger.classList.add('hamburger');
+            hamburger.innerHTML = '<div></div><div></div><div></div>';
+            document.body.prepend(hamburger);
+
+            const navMenu = document.querySelector('.nav-menu');
+            const marketTicker = document.querySelector('.market-ticker');
+
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+
+                if (navMenu.classList.contains('active')) {
+                    marketTicker.style.display = 'none';
+                } else {
+                    marketTicker.style.display = 'block';
+                }
+            });
+
+            // Remove blue container and stay with hamburger icon only
+            hamburger.style.background = 'transparent';
+            hamburger.style.padding = '0';
+            hamburger.style.borderRadius = '0';
+
+            // Log creation of hamburger button
+            console.log('Hamburger button created:', hamburger);
+
+            // Ensure visibility with high z-index and proper positioning
+            hamburger.style.zIndex = '9999';
+            hamburger.style.position = 'fixed';
+            hamburger.style.top = '10px';
+            hamburger.style.right = '10px';
+        });
+    </script>
+</body>
+</html>
